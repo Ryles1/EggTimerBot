@@ -18,8 +18,7 @@ VOICE_CHANNEL_NAME = os.getenv('VOICE_CHANNEL_NAME')
 client = discord.Client()
 
 @client.event
-async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+async def on_connect():
     # get list of guilds that bot is a member
     guilds = client.guilds
 
@@ -34,7 +33,9 @@ async def on_ready():
     voice_state_none = discord.VoiceState(data=dict(channel=None))
     voice_state_in_channel = discord.VoiceState(data=dict(channel=voice_chan_obj))
 
-    print(guilds)
+@client.event
+async def on_ready():
+    print(f'{client.user} has connected to Discord!')
 
 
 @client.event
