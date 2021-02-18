@@ -38,6 +38,7 @@ async def on_ready():
     print(f'{client.user} has connected to Discord!')
 
 
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -47,7 +48,7 @@ async def on_message(message):
         await message.channel.send('Hello!')
 
     if 'hurry' in message.content.lower():
-        await message.channel.send(f'{str(message.author).upper()} SAYS IT IS TAKING TOO LONG')
+        await message.channel.send(f'{str(message.author).split("#")[0].upper()} SAYS IT IS TAKING TOO LONG')
         await sleep(2)
         await message.channel.send('GETTING THE EGG TIMER')
         await sleep(2)
@@ -55,8 +56,7 @@ async def on_message(message):
         await sleep(2)
         await message.channel.send('HURRY IT UP')
 
-async def on_voice_state_update(member, ):
-    pass
+
 
 client.run(TOKEN)
 
