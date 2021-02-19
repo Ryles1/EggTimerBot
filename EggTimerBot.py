@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import logging
 from asyncio import sleep
 from sys import platform
+from ctypes.util import find_library
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -17,7 +18,7 @@ TOKEN = os.getenv('BOT_TOKEN')
 VOICE_CHANNEL_NAME = os.getenv('VOICE_CHANNEL_NAME')
 
 if platform == "linux" and not discord.opus.is_loaded():
-   discord.opus.load_opus("opus")
+    discord.opus.load_opus(find_library('opus'))
 
 class EggTimer(discord.Client):
     def __init__(self, **options):
