@@ -34,7 +34,7 @@ class EggTimer(discord.Client):
         self.member_obj_list = [member for guild in self.guilds for member in guild.members]
 
         # get VoiceChannel object for checking state and if anyone is in it
-        self.voice_channels = [chan for guild in self.guilds for chan in guild.voice_channels]
+        self.voice_channels = [chan for chan in self.get_all_channels() if isinstance(chan, discord.VoiceChannel)]
         self.current_voice_chan = discord.utils.get(self.voice_channels, name=VOICE_CHANNEL_NAME)
         if self.current_voice_chan is None:
             self.current_voice_chan = discord.utils.get(self.voice_channels, name="General")
@@ -47,6 +47,9 @@ class EggTimer(discord.Client):
         if self.current_voice_chan is not None:
             vc = await self.current_voice_chan.connect()
             print(f'{self.user} has connected to {self.current_voice_chan}')
+            timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
+            vc.play(timebomb)
+
 
     async def on_message(self, message):
         if message.author == self.user:
@@ -62,10 +65,9 @@ class EggTimer(discord.Client):
             await sleep(2)
             await message.channel.send('STARTING THE EGG TIMER')
             await sleep(2)
-            await message.channel.send('HURRY IT UP')
+            await message.channel.send('HURRY IT UP - TICK TOCK MOTHERFUCKER')
 
 
 client = EggTimer()
 
 client.run(TOKEN)
-
