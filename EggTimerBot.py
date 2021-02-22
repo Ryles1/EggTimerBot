@@ -16,6 +16,7 @@ logger.addHandler(handler)
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
 VOICE_CHANNEL_NAME = os.getenv('VOICE_CHANNEL_NAME')
+EGG_TIMER_CHANNEL_NAME = 'Get the Egg Timer'
 
 if platform == "linux" and not discord.opus.is_loaded():
     discord.opus.load_opus(find_library('opus'))
@@ -33,24 +34,11 @@ class EggTimer(discord.Client):
     async def on_connect(self):
         # get list of member objects from list of guilds
         self.member_obj_list = [member for guild in self.guilds for member in guild.members]
-
-        # get VoiceChannel object for checking state and if anyone is in it
-        self.voice_channels = [chan for chan in self.get_all_channels() if isinstance(chan, discord.VoiceChannel)]
-        self.current_voice_chan = discord.utils.get(self.voice_channels, name=VOICE_CHANNEL_NAME)
-        if self.current_voice_chan is None:
-            self.current_voice_chan = discord.utils.get(self.voice_channels, name="General")
-
-        # get VoiceState object for selected voice channel
-        self.voice_state_in_channel = discord.VoiceState(data=dict(channel=self.current_voice_chan))
+        # check for anyone in desired voice channels
+        self.check_vcs()
 
     async def on_ready(self):
         print(f'{self.user} has connected to Discord!')
-        if self.current_voice_chan is not None:
-            vc = await self.current_voice_chan.connect()
-            print(f'{self.user} has connected to {self.current_voice_chan}')
-            timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
-            vc.play(timebomb)
-
 
     async def on_message(self, message):
         if message.author == self.user:
@@ -67,6 +55,42 @@ class EggTimer(discord.Client):
             await message.channel.send('STARTING THE EGG TIMER')
             await sleep(2)
             await message.channel.send('HURRY IT UP - TICK TOCK MOTHERFUCKER')
+            if message.author.voice:
+                await self.play_bomb(message.author.voice.channel)
+
+    async def on_member_update(self, member):
+    # todo: check if the connors signed on and send him a message if he is.
+        if member.name == 'Dr.Phil':
+            self.message_drphil()
+        if member.name == 'Conn':
+            self.message_conn()
+        self.check_vcs()
+
+    async def play_bomb(self, channel):
+        #todo: play bomb sound in selected voice channel
+        if self.current_voice_chan is not None:
+            vc = await self.current_voice_chan.connect()
+            print(f'{self.user} has connected to {self.current_voice_chan}')
+            timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
+            vc.play(timebomb)
+
+    def check_vcs(self):
+        # get VoiceChannel object for checking state and if anyone is in it
+        self.voice_channels = [chan for chan in self.get_all_channels() if isinstance(chan, discord.VoiceChannel)]
+        self.current_voice_chan = discord.utils.get(self.voice_channels, name=VOICE_CHANNEL_NAME)
+        if self.current_voice_chan is None:
+            self.current_voice_chan = discord.utils.get(self.voice_channels, name="General")
+
+        # get VoiceState object for selected voice channel
+        self.voice_state_in_channel = discord.VoiceState(data=dict(channel=self.current_voice_chan))
+
+    def message_conn(self):
+        pass
+
+    def message_drphil(self):
+        pass
+
+
 
 
 client = EggTimer()
