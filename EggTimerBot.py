@@ -17,10 +17,12 @@ load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
 VOICE_CHANNEL_NAME = os.getenv('VOICE_CHANNEL_NAME')
 EGG_TIMER_CHANNEL_NAME = 'Get the Egg Timer'
+GUILD_NAME = os.getenv('GUILD_NAME')
 
 if platform == "linux" and not discord.opus.is_loaded():
     discord.opus.load_opus(find_library('opus'))
 
+#todo: convert to bot?  so can command it to play the sound?
 class EggTimer(discord.Client):
     def __init__(self, **options):
         super().__init__(**options)
@@ -48,7 +50,7 @@ class EggTimer(discord.Client):
             await message.channel.send('Hello!')
 
         if 'hurry' in message.content.lower():
-            await message.channel.send(f'{str(message.author).split("#")[0].upper()} SAYS IT IS TAKING TOO LONG')
+            await message.channel.send(f'{message.author.mention} SAYS IT IS TAKING TOO LONG')
             await sleep(2)
             await message.channel.send('GETTING THE EGG TIMER')
             await sleep(2)
@@ -59,15 +61,13 @@ class EggTimer(discord.Client):
                 await self.play_bomb(message.author.voice.channel)
 
     async def on_member_update(self, member):
-    # todo: check if the connors signed on and send him a message if he is.
         if member.name == 'Dr.Phil':
-            self.message_drphil()
+            await self.message_drphil()
         if member.name == 'Conn':
-            self.message_conn()
+            await self.message_conn()
         self.check_vcs()
 
     async def play_bomb(self, channel):
-        #todo: play bomb sound in selected voice channel
         if self.current_voice_chan is not None:
             vc = await self.current_voice_chan.connect()
             print(f'{self.user} has connected to {self.current_voice_chan}')
@@ -84,12 +84,19 @@ class EggTimer(discord.Client):
         # get VoiceState object for selected voice channel
         self.voice_state_in_channel = discord.VoiceState(data=dict(channel=self.current_voice_chan))
 
-    def message_conn(self):
-        pass
+    async def message_conn(self):
+        conn = discord.utils.get(self.guilds.members, name='Conn')   # member object for conn
+        guild = discord.utils.get(self.guilds, name=GUILD_NAME)
+        channel = discord.utils.get(guild.text_channels, name='general')
+        if conn:
+            await channel.send(f'Hey {conn.mention}, fuck you!')
 
-    def message_drphil(self):
-        pass
-
+    async def message_drphil(self):
+        dr_phil = discord.utils.find(lambda m: m.name == 'Dr.Phil', self.guilds.members )   # member object for Dr.Phil
+        guild = discord.utils.get(self.guilds, name=GUILD_NAME)
+        channel = discord.utils.get(guild.text_channels, name='general')
+        if dr_phil:
+            await channel.send(f'Hey {dr_phil.mention}, I am at your service!')
 
 
 
