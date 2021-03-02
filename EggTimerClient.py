@@ -22,6 +22,7 @@ GUILD_NAME = getenv('GUILD_NAME')
 if platform == "linux" and not discord.opus.is_loaded():
     discord.opus.load_opus(find_library('opus'))
 
+
 class EggTimer(discord.Client):
     def __init__(self, **options):
         super().__init__(**options)

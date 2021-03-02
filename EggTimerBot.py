@@ -28,5 +28,61 @@ intents = discord.Intents.all()
 
 bot = discord.ext.commands.Bot(command_prefix='!', description=description, intents=intents)
 
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
+
+
+async def on_message(self, message):
+    if message.author == self.user:
+        return
+
+    if message.content.lower().startswith('hello'):
+        await message.channel.send('Hello!')
+
+    if 'hurry' in message.content.lower():
+        await message.channel.send(f'{message.author.mention} SAYS IT IS TAKING TOO LONG')
+        await sleep(2)
+        await message.channel.send('GETTING THE EGG TIMER')
+        await sleep(2)
+        await message.channel.send('STARTING THE EGG TIMER')
+        await sleep(2)
+        await message.channel.send('HURRY IT UP - TICK TOCK MOTHERFUCKER')
+        if message.author.voice:
+            await self.play_bomb(message.author.voice.channel)
+
+
+async def on_member_update(member):
+    if member.name == 'Dr.Phil':
+        await message_drphil()
+    if member.name == 'Conn':
+        await message_conn()
+
+
+async def message_conn():
+    conn = discord.utils.get(self.guilds.members, name='Conn')   # member object for conn
+    guild = discord.utils.get(self.guilds, name=GUILD_NAME)
+    channel = discord.utils.get(guild.text_channels, name='general')
+    if conn:
+        await channel.send(f'Hey {conn.mention}, fuck you!')
+
+
+async def message_drphil():
+    dr_phil = discord.utils.find(lambda m: m.name == 'Dr.Phil', self.guilds.members)   # member object for Dr.Phil
+    guild = discord.utils.get(self.guilds, name=GUILD_NAME)
+    channel = discord.utils.get(guild.text_channels, name='general')
+    if dr_phil:
+        await channel.send(f'Hey {dr_phil.mention}, I am at your service!')
+
+
 @bot.command()
-async def
+async def time_bomb(ctx):
+    #get voice channel, play bomb noise
+    if self.current_voice_chan is not None:
+        vc = await self.current_voice_chan.connect()
+        print(f'{self.user} has connected to {self.current_voice_chan}')
+        timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
+        vc.play(timebomb)
+
+bot.run(TOKEN)
