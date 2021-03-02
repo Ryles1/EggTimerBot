@@ -53,25 +53,26 @@ async def on_message(self, message):
             await self.play_bomb(message.author.voice.channel)
 
 
-async def on_member_update(member):
-    if member.name == 'Dr.Phil':
-        await message_drphil()
-    if member.name == 'Conn':
-        await message_conn()
+async def on_member_update(before, after):
+    if after.status == 'online' and before.status != 'online':
+        if before.name == 'Dr.Phil':
+            await message_drphil(after)
+        if before.name == 'Conn':
+            await message_conn(after)
 
 
-async def message_conn():
-    conn = discord.utils.get(self.guilds.members, name='Conn')   # member object for conn
-    guild = discord.utils.get(self.guilds, name=GUILD_NAME)
-    channel = discord.utils.get(guild.text_channels, name='general')
+async def message_conn(member):
+    conn = discord.utils.get(member.guilds, name='Conn')   # member object for conn
+    guild = discord.utils.get(member.guilds, name=GUILD_NAME)  # guild object
+    channel = discord.utils.get(guild.text_channels, name='general')  # general channel in guild
     if conn:
         await channel.send(f'Hey {conn.mention}, fuck you!')
 
 
-async def message_drphil():
-    dr_phil = discord.utils.find(lambda m: m.name == 'Dr.Phil', self.guilds.members)   # member object for Dr.Phil
-    guild = discord.utils.get(self.guilds, name=GUILD_NAME)
-    channel = discord.utils.get(guild.text_channels, name='general')
+async def message_drphil(member):
+    dr_phil = discord.utils.find(lambda m: m.name == 'Dr.Phil', member.guilds)   # member object for Dr.Phil
+    guild = discord.utils.get(member.guilds, name=GUILD_NAME)  # guild object
+    channel = discord.utils.get(guild.text_channels, name='general')  # general channel in guild
     if dr_phil:
         await channel.send(f'Hey {dr_phil.mention}, I am at your service!')
 

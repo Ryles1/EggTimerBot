@@ -60,12 +60,12 @@ class EggTimer(discord.Client):
             if message.author.voice:
                 await self.play_bomb(message.author.voice.channel)
 
-    async def on_member_update(self, member):
-        if member.name == 'Dr.Phil':
-            await self.message_drphil()
-        if member.name == 'Conn':
-            await self.message_conn()
-        self.check_vcs()
+    async def on_member_update(self, before, after):
+        if after.status == 'online' and before.status != 'online':
+            if before.name == 'Dr.Phil':
+                await self.message_drphil()
+            if before.name == 'Conn':
+                await self.message_conn()
 
     async def play_bomb(self, channel):
         if self.current_voice_chan is not None:
@@ -97,7 +97,6 @@ class EggTimer(discord.Client):
         channel = discord.utils.get(guild.text_channels, name='general')
         if dr_phil:
             await channel.send(f'Hey {dr_phil.mention}, I am at your service!')
-
 
 
 client = EggTimer()
