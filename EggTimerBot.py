@@ -34,8 +34,9 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
 
-async def on_message(self, message):
-    if message.author == self.user:
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
         return
 
     if message.content.lower().startswith('hello'):
@@ -49,41 +50,34 @@ async def on_message(self, message):
         await message.channel.send('STARTING THE EGG TIMER')
         await sleep(2)
         await message.channel.send('HURRY IT UP - TICK TOCK MOTHERFUCKER')
-        if message.author.voice:
-            await self.play_bomb(message.author.voice.channel)
 
 
+@bot.event
 async def on_member_update(before, after):
-    if after.status == 'online' and before.status != 'online':
-        if before.name == 'Dr.Phil':
-            await message_drphil(after)
-        if before.name == 'Conn':
-            await message_conn(after)
-
-
-async def message_conn(member):
-    conn = discord.utils.get(member.guilds, name='Conn')   # member object for conn
-    guild = discord.utils.get(member.guilds, name=GUILD_NAME)  # guild object
-    channel = discord.utils.get(guild.text_channels, name='general')  # general channel in guild
-    if conn:
-        await channel.send(f'Hey {conn.mention}, fuck you!')
-
-
-async def message_drphil(member):
-    dr_phil = discord.utils.find(lambda m: m.name == 'Dr.Phil', member.guilds)   # member object for Dr.Phil
-    guild = discord.utils.get(member.guilds, name=GUILD_NAME)  # guild object
-    channel = discord.utils.get(guild.text_channels, name='general')  # general channel in guild
-    if dr_phil:
-        await channel.send(f'Hey {dr_phil.mention}, I am at your service!')
+    channel = discord.utils.get(after.guild.text_channels, name='general')  # general channel in guild
+    messages = {'Dr.Phil': f'Hey {after.mention}, I am at your service!',
+                'Conn': f'Hey {after.mention}, fuck you!',
+                'Ryles': f'All hail {after.mention}, the Creator!'}
+    if after.status.value == 'online' and before.status.value != 'online':
+        try:
+            await channel.send(messages[after.name])
+        except KeyError:
+            pass
 
 
 @bot.command()
-async def time_bomb(ctx):
-    #get voice channel, play bomb noise
-    if self.current_voice_chan is not None:
-        vc = await self.current_voice_chan.connect()
-        print(f'{self.user} has connected to {self.current_voice_chan}')
-        timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
-        vc.play(timebomb)
+async def eggtimer(ctx):
+    # get voice channel, play bomb noise
+    author = ctx.author
+    print(author)
+    # get authors voice channel and connect
+    vstate = author.voice
+    print(vstate)
+    vclient = await vstate.channel.connect()
+    bot.voice_clients.append(vclient)
+    print(f'{bot.user} has connected to {vclient}')
+    timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
+    # check bot method to play audio
+    vclient.play(timebomb)
 
 bot.run(TOKEN)

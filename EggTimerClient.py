@@ -66,6 +66,8 @@ class EggTimer(discord.Client):
                 await self.message_drphil()
             if before.name == 'Conn':
                 await self.message_conn()
+            if before.name == 'Ryles':
+                print('Member update detected')
 
     async def play_bomb(self, channel):
         if self.current_voice_chan is not None:
