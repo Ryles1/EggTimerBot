@@ -26,17 +26,32 @@ if platform == "linux" and not discord.opus.is_loaded():
 description = 'A bot to deal with slow people.'
 intents = discord.Intents.all()
 
-bot = discord.ext.commands.Bot(command_prefix='!', description=description, intents=intents)
+client = commands.Bot(command_prefix='$', description=description, intents=intents)
 
 
-@bot.event
+@client.command(description="Gets the egg timer!")
+async def eggtimer(ctx):
+    # get voice channel, play bomb noise
+    author = ctx.author
+    try:
+        vstate = author.voice   # get authors voice channel and connect
+        vclient = await vstate.channel.connect()
+        client.voice_clients.append(vclient)
+        print(f'{client.user} has connected to {vclient}')
+        timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
+        vclient.play(timebomb)
+    except AttributeError:
+        await ctx.channel.send(f"Silly {author.mention}, you're not in a voice channel!")
+
+@client.event
 async def on_ready():
-    print(f'{bot.user} has connected to Discord!')
+    print(f'{client.user} has connected to Discord!')
 
 
-@bot.event
+@client.event
 async def on_message(message):
-    if message.author == bot.user:
+    await client.process_commands(message)
+    if message.author == client.user:
         return
 
     if message.content.lower().startswith('hello'):
@@ -52,7 +67,7 @@ async def on_message(message):
         await message.channel.send('HURRY IT UP - TICK TOCK MOTHERFUCKER')
 
 
-@bot.event
+@client.event
 async def on_member_update(before, after):
     channel = discord.utils.get(after.guild.text_channels, name='general')  # general channel in guild
     messages = {'Dr.Phil': f'Hey {after.mention}, I am at your service!',
@@ -65,19 +80,4 @@ async def on_member_update(before, after):
             pass
 
 
-@bot.command()
-async def eggtimer(ctx):
-    # get voice channel, play bomb noise
-    author = ctx.author
-    print(author)
-    # get authors voice channel and connect
-    vstate = author.voice
-    print(vstate)
-    vclient = await vstate.channel.connect()
-    bot.voice_clients.append(vclient)
-    print(f'{bot.user} has connected to {vclient}')
-    timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
-    # check bot method to play audio
-    vclient.play(timebomb)
-
-bot.run(TOKEN)
+client.run(TOKEN)
