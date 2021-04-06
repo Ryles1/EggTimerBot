@@ -73,7 +73,8 @@ async def on_member_update(before, after):
     channel = discord.utils.get(after.guild.text_channels, name='general')  # general channel in guild
     messages = {'Dr.Phil': f'Hey {after.mention}, I am at your service!',
                 'Conn': f'Hey {after.mention}, fuck you!',
-                'Ryles': f'All hail {after.mention}, the Creator!'}
+                'Ryles': f'All hail {after.mention}, the Creator!',
+                'zxKylexz': f'Hey everyone! {after.mention} is here, spreading coronavirus everywhere!'}
     if after.status.value == 'online' and before.status.value != 'online':
         try:
             await channel.send(messages[after.name])
