@@ -43,7 +43,7 @@ async def eggtimer(ctx):
         print(f'{client.user} has connected to {vclient}')
         timebomb = discord.FFmpegPCMAudio('TimeBombShort.mp3')
         await vclient.play(timebomb)
-        await vclient.disconnect()
+        vclient.disconnect()
     except AttributeError:
         await ctx.channel.send(f"Silly {author.mention}, you're not in a voice channel!")
 
