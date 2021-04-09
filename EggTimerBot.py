@@ -75,7 +75,8 @@ async def on_member_update(before, after):
                 'Conn': f'Hey {after.mention}, fuck you!',
                 'Ryles': f'All hail {after.mention}, the Creator!',
                 'zxKylexz': f'Hey everyone! {after.mention} is here, spreading coronavirus everywhere!',
-                'Jazzyz': f'Oh hey {after.mention}!'}
+                'Jazzyz': f'Oh hey {after.mention}!',
+                'frostedflakes6': f'Oh hey, {after.mention} and his muscles are here!  Hope you brought your plaid!'}
     if after.status.value == 'online' and before.status.value != 'online':
         try:
             await channel.send(messages[after.name])
