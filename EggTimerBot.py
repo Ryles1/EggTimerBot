@@ -48,6 +48,16 @@ async def eggtimer(ctx):
         await ctx.channel.send(f"Silly {author.mention}, you're not in a voice channel!")
 
 
+@client.command(description='Disconnects from voice channel')
+async def disconnect(ctx):
+    # if in voice channel, disconnect
+    try:
+        if client.voice_clients:
+            client.voice_clients[0].disconnect()
+    except:
+        pass
+
+
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
